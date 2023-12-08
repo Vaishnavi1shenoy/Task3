@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        header {
+            background-color: #3498db;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #fff;
+        }
+
+        #calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 15px;
+            max-width: 400px;
+            margin: auto;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #display {
+            grid-column: span 4;
+            text-align: right;
+            padding: 15px;
+            font-size: 1.8em;
+            border: 1px solid #2c3e50;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 1.4em;
+            text-align: center;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        button.operator {
+            background-color: #e74c3c;
+        }
+
+        button.double {
+            grid-column: span 2;
+        }
+
+        button.clear {
+            background-color: #95a5a6;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            color: #ecf0f1;
+        }
+    </style>
+    <title>Stylish Calculator</title>
+</head>
+<body>
+
+    <header>
+        <h1>Calculator</h1>
+    </header>
+
+    <div id="calculator">
+        <div id="display"></div>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button class="operator">/</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button class="operator">*</button>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button class="operator">-</button>
+        <button class="double">0</button>
+        <button class="double">.</button>
+        <button class="operator">=</button>
+        <button class="operator">+</button>
+        <button class="clear">C</button>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('button');
+
+        let currentInput = '';
+        let firstOperand = null;
+        let operator = null;
+
+        function updateDisplay() {
+            display.textContent = currentInput || firstOperand || '0';
+        }
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                if (button.classList.contains('operator')) {
+                    handleOperator(button.textContent);
+                } else if (button.classList.contains('double')) {
+                    handleInput(button.textContent);
+                } else if (button.classList.contains('clear')) {
+                    clearCalculator();
+                } else {
+                    handleInput(button.textContent);
+                }
+                updateDisplay();
+            });
+        });
+
+        function handleInput(value) {
+            if (value === '.' && currentInput.includes('.')) {
+                return; // Do not allow multiple dots
+            }
+            currentInput += value;
+        }
+
+        function handleOperator(nextOperator) {
+            const inputValue = parseFloat(currentInput);
+
+            if (firstOperand === null) {
+                firstOperand = inputValue;
+                currentInput = '';
+                operator = nextOperator;
+            } else {
+                performCalculation();
+                operator = nextOperator;
+            }
+        }
+
+        function performCalculation() {
+            const inputValue = parseFloat(currentInput);
+
+            switch (operator) {
+                case '+':
+                    firstOperand += inputValue;
+                    break;
+                case '-':
+                    firstOperand -= inputValue;
+                    break;
+                case '*':
+                    firstOperand *= inputValue;
+                    break;
+                case '/':
+                    if (inputValue !== 0) {
+                        firstOperand /= inputValue;
+                    } else {
+                        alert("Cannot divide by zero!");
+                        clearCalculator();
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            currentInput = '';
+        }
+
+        function clearCalculator() {
+            currentInput = '';
+            firstOperand = null;
+            operator = null;
+        }
+    </script>
+
+</body>
+</html>
